@@ -111,9 +111,7 @@ export default function CreateJob() {
       acceptedAssets.filter((_, currentIndex) => currentIndex !== index),
     );
   const updateAcceptedAsset = (index: number, value: string) => {
-    const updated = [...acceptedAssets];
-    updated[index] = value;
-    setAcceptedAssets(updated);
+    setAcceptedAssets((prev) => prev.map((v, i) => (i === index ? value : v)));
   };
 
   const addRequirement = () => setRequirements([...requirements, ""]);
@@ -122,18 +120,14 @@ export default function CreateJob() {
       requirements.filter((_, currentIndex) => currentIndex !== index),
     );
   const updateRequirement = (index: number, value: string) => {
-    const updated = [...requirements];
-    updated[index] = value;
-    setRequirements(updated);
+    setRequirements((prev) => prev.map((v, i) => (i === index ? value : v)));
   };
 
   const addMilestone = () => setMilestones([...milestones, { amount: "" }]);
   const removeMilestone = (i: number) =>
     setMilestones(milestones.filter((_, idx) => idx !== i));
   const updateMilestone = (i: number, val: string) => {
-    const updated = [...milestones];
-    updated[i].amount = val;
-    setMilestones(updated);
+    setMilestones((prev) => prev.map((m, idx) => (idx === i ? { ...m, amount: val } : m)));
   };
 
   const normalizedMilestones = milestones.filter(
