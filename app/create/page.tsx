@@ -20,6 +20,8 @@ import { formatTxError } from "@/app/lib/errors";
 
 type WizardSection = "details" | "milestones" | "review";
 
+const MAX_MILESTONES = 10;
+
 const inputClassName =
   "w-full bg-surface-field border border-border-subtle rounded-lg px-4 py-2 text-sm text-text-primary placeholder:text-text-disabled transition-colors duration-200 hover:border-accent-soft hover:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft focus-visible:ring-offset-2 focus-visible:ring-offset-surface-page disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-border-subtle disabled:hover:bg-surface-field";
 
@@ -127,7 +129,10 @@ export default function CreateJob() {
     setRequirements(updated);
   };
 
-  const addMilestone = () => setMilestones([...milestones, { amount: "" }]);
+  const milestoneCapReached = milestones.length >= MAX_MILESTONES;
+  const addMilestone = () => {
+    if (!milestoneCapReached) setMilestones([...milestones, { amount: "" }]);
+  };
   const removeMilestone = (i: number) =>
     setMilestones(milestones.filter((_, idx) => idx !== i));
   const updateMilestone = (i: number, val: string) => {
@@ -896,11 +901,17 @@ export default function CreateJob() {
                     <button
                       type="button"
                       onClick={addMilestone}
+                      disabled={milestoneCapReached}
                       aria-label="Add milestone"
                       className={`${buttonClassName} text-accent-soft hover:text-accent-soft-hover rounded-sm px-0 py-0 active:scale-95`}
                     >
                       + Add Milestone
                     </button>
+                    {milestoneCapReached && (
+                      <span className="text-xs text-text-muted ml-2" data-testid="milestone-cap-hint">
+                        Up to {MAX_MILESTONES} milestones per escrow
+                      </span>
+                    )}
                   </div>
                   {hasNoMilestones ? (
                     <EmptyCollectionState
